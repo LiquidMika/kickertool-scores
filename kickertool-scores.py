@@ -8,13 +8,12 @@ def xor(x, y):
     return bool((x and not y) or (not x and y))
 
 
-def list_match_joueur(joueur, matches):
+def list_match_joueur(joueur, matches, longest_string):
     liste_matchs_joueur = "\n"
     liste_matchs_joueur += joueur + "\n"
     liste_matchs_joueur += "=" * len(joueur) + "\n"
     for match in matches:
         if joueur in match:
-            vainqueur_joueur1 = True
             nb_victoire_p1 = 0
             nb_victoire_p2 = 0
             for a, b in match[3]:
@@ -23,25 +22,28 @@ def list_match_joueur(joueur, matches):
                 else:
                     nb_victoire_p2 += 1
             if xor(nb_victoire_p1 > nb_victoire_p2, joueur == match[1]):
-                liste_matchs_joueur += "Défaite    "
+                vainq_or_defait =  "Défaite"
             else:
-                liste_matchs_joueur += "Victoire   "
+                vainq_or_defait = "Victoire"
 
             if joueur == match[1]:
-                liste_matchs_joueur += str(nb_victoire_p1) + " - "
-                liste_matchs_joueur += str(nb_victoire_p2) + "   "
-                liste_matchs_joueur += match[2] + "\t"
+                score = str(nb_victoire_p1) + " - " + str(nb_victoire_p2)
+                opponent = match[2]
+                lst_manches = []
                 for a, b in match[3]:
-                    liste_matchs_joueur += str(a) + "-" + str(b) + "\t"
-                liste_matchs_joueur += "\n"
-
+                    lst_manches.append(str(a) + "-" + str(b))
+                str_manches = '   '.join(lst_manches)
+            
             if joueur == match[2]:
-                liste_matchs_joueur += str(nb_victoire_p2) + " - "
-                liste_matchs_joueur += str(nb_victoire_p1) + "   "
-                liste_matchs_joueur += match[1] + "\t"
+                score = str(nb_victoire_p2) + " - " + str(nb_victoire_p1)
+                opponent = match[1]
+                lst_manches = []
                 for a, b in match[3]:
-                    liste_matchs_joueur += str(b) + "-" + str(a) + "\t"
-                liste_matchs_joueur += "\n"
+                    lst_manches.append(str(b) + "-" + str(a))
+                str_manches = '   '.join(lst_manches)
+
+            str_ligne = f"{vainq_or_defait.ljust(12)}{score}   {opponent.ljust(longest_string + 4)}{str_manches}"
+            liste_matchs_joueur += str_ligne + '\n'
     return liste_matchs_joueur
 
 
@@ -81,5 +83,7 @@ list_players = []
 for player in dict_players.values():
     list_players.append(player[3:])
 
+car_max = len(max(list_players, key=len))
+
 for player in sorted(list_players):
-    print(list_match_joueur(player, list_matchs))
+    print(list_match_joueur(player, list_matchs, longest_string=car_max))
